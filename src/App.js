@@ -36,18 +36,10 @@ class App extends Component {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
+          <a href="#" className="pure-menu-heading pure-menu-link">FreeSwap</a>
         </nav>
-
         <main className="container">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
-              {
-                this.props.totalNumberOfItems
-              }
-            </div>
-          </div>
-          <div>
+         <div>
             <NewItemForm
               name={form.name}
               description={form.description}
