@@ -5,7 +5,8 @@ const initialState = {
     name: 'sss',
     description: ''
   },
-  totalNumberOfItems: 0
+  totalNumberOfItems: 0,
+  items: []
 }
 
 const swapItemReducer = (state = initialState, action) => {
@@ -16,6 +17,9 @@ const swapItemReducer = (state = initialState, action) => {
       return {...state, form: {...state.form, description: action.payload}};
     case ACTIONS.GET_TOTAL_NUMBER_OF_ITEMS_SUCCESS:
       return {...state, totalNumberOfItems: action.payload};
+    case ACTIONS.GET_ONE_ITEM_SUCCESS:
+      console.log('action', action.payload);
+      return {...state, items: [...state.items, action.payload]};
     default:
       return state;
 	}

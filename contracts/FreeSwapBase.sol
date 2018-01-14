@@ -1,6 +1,8 @@
 pragma solidity ^0.4.18;
 
 contract FreeSwapBase {
+  /*** EVENTS ***/
+  event ItemCreated(address indexed giver, uint itemIndex, string name);
   enum SwapItemState {Created, Swaped, Disabled}
 
   struct SwapItem {
@@ -18,6 +20,7 @@ contract FreeSwapBase {
   function createSwapItem(string _name, string _description) external returns (uint) {
     uint swapItemIndex = swapItems.push(SwapItem(_name, _description, SwapItemState.Created));
     swapItemIndexToGiver[swapItemIndex] = msg.sender;
+    ItemCreated(msg.sender, swapItemIndex, _name);
     return swapItemIndex;
   }
 
@@ -25,12 +28,13 @@ contract FreeSwapBase {
     return swapItems;
   }
 
-  function getSwapItemsCount() public view returns (uint) {
-    return swapItems.length;
+  function getSwapItem(uint itemIndex) public view returns (uint, string, string, SwapItemState) {
+    SwapItem memory swapItem = swapItems[itemIndex];
+    return (itemIndex, swapItem.name, swapItem.description, swapItem.state);
   }
 
-  function testing() public view returns (uint) {
-    return 123;
+  function getSwapItemsCount() public view returns (uint) {
+    return swapItems.length;
   }
 
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import NewItemForm from './components/NewItemForm';
+import ItemList from './components/ItemList';
 import * as ACTIONS from './redux/swapItem/actions';
 
 import './css/oswald.css'
@@ -12,24 +13,26 @@ import './App.css'
 class App extends Component {
 
   componentWillMount() {
-    this.props.getTotalNumberOfItems();
+    this.props.getAllItems();
   }
 
-  handleCreateItem() {
-    //this.freeSwapInstance.createSwapItem("pencil", "black pencil", {from: accounts[0]});
+  handleFormSubmit = () => {
+    const {name, description} = this.props.form;
+    this.props.createItem(name, description);
   }
 
   handleFormFieldUpdate = (fieldName, value) => {
     switch (fieldName) {
       case 'name':
-        this.props.updateNewItemName(value);
+        return this.props.updateNewItemName(value);
       case 'description':
-        this.props.updateNewItemDescription(value);
+        return this.props.updateNewItemDescription(value);
     }
   }
 
   render() {
-    const {form} = this.props;
+    const {form, items} = this.props;
+    console.log('items', items);
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
@@ -44,14 +47,18 @@ class App extends Component {
               }
             </div>
           </div>
+          <div>
+            <NewItemForm
+              name={form.name}
+              description={form.description}
+              handleFieldUpdate={this.handleFormFieldUpdate}
+              handleSubmit={this.handleFormSubmit} />
+          </div>
+          <div>
+            <ItemList
+              items={items}/>
+          </div>
         </main>
-        <div>
-          <NewItemForm
-            name={form.name}
-            description={form.description}
-            handleFieldUpdate={this.handleFormFieldUpdate}
-            handleSubmit={this.handleCreateItemButton} />
-        </div>
       </div>
     );
   }
@@ -60,14 +67,22 @@ class App extends Component {
 App.propTypes = {
   form: PropTypes.shape({
     name: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
+    getAllItems: PropTypes.func
   }),
-  totalNumberOfItems: PropTypes.number
+  totalNumberOfItems: PropTypes.number,
+  items: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    state: PropTypes.number
+  }))
 };
 
-const mapStateToProps = state => ({
-  form: state.swapItem.form,
-  totalNumberOfItems: state.swapItem.totalNumberOfItems
+const mapStateToProps = ({swapItem})=> ({
+  form: swapItem.form,
+  totalNumberOfItems: swapItem.totalNumberOfItems,
+  items: swapItem.items
 });
 
 const AppContainer = connect(
@@ -75,7 +90,8 @@ const AppContainer = connect(
   {
     updateNewItemName: ACTIONS.updateNewItemName,
     updateNewItemDescription: ACTIONS.updateNewItemDescription,
-    getTotalNumberOfItems: ACTIONS.getTotalNumberOfItems,
+    createItem: ACTIONS.createItem,
+    getAllItems: ACTIONS.getAllItems
   }
 )(App);
 
