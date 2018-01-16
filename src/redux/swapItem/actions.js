@@ -16,6 +16,9 @@ export const GET_ONE_ITEM_FAILURE = 'SWAP_ITEM/GET_ONE_ITEM_FAILURE';
 export const DISABLE_ONE_ITEM_REQUEST = 'SWAP_ITEM/DISABLE_ONE_ITEM_REQUEST';
 export const DISABLE_ONE_ITEM_SUCCESS = 'SWAP_ITEM/DISABLE_ONE_ITEM_SUCCESS';
 export const DISABLE_ONE_ITEM_FAILURE = 'SWAP_ITEM/DISABLE_ONE_ITEM_FAILURE';
+export const REQUEST_ONE_ITEM_REQUEST = 'SWAP_ITEM/REQUEST_ONE_ITEM_REQUEST';
+export const REQUEST_ONE_ITEM_SUCCESS = 'SWAP_ITEM/REQUEST_ONE_ITEM_SUCCESS';
+export const REQUEST_ONE_ITEM_FAILURE = 'SWAP_ITEM/REQUEST_ONE_ITEM_FAILURE';
 
 export const updateNewItemName = name => ({
   type: UPDATE_NEW_ITEM_NAME,
@@ -45,7 +48,7 @@ export const getTotalNumberOfItems = () => (dispatch, getState) => {
     .then(([web3, freeSwapInstance]) => {
       return new Promise((resolve, reject) => {
         web3.eth.getAccounts((error, accounts) => {
-          freeSwapInstance.getSwapItemsCount()
+          freeSwapInstance.getItemsCount()
             .then((result) => {
               const resultInNumber = result.toNumber();
               dispatch(getTotalNumberOfItemsSuccess(resultInNumber));
@@ -84,7 +87,7 @@ export const getOneItem = itemIndex => (dispatch, getState) => {
   return getWeb3
     .then(([web3, freeSwapInstance]) => {
       return new Promise((resolve, reject) => {
-        freeSwapInstance.getSwapItem(itemIndex)
+        freeSwapInstance.getItem(itemIndex)
           .then((result) => {
             dispatch(getOneItemSuccess(buildItem(result)));
           })
@@ -130,7 +133,7 @@ export const createItem = (name, description) => (dispatch, getState) => {
   getWeb3
     .then(([web3, freeSwapInstance]) => {
       web3.eth.getAccounts((error, accounts) => {
-        freeSwapInstance.createSwapItem(name, description, {from: accounts[0]})
+        freeSwapInstance.createItem(name, description, {from: accounts[0]})
         .then((result) => {
           dispatch(createItemSuccess(result));
           dispatch(getTotalNumberOfItems());
@@ -161,7 +164,8 @@ export const disableItem = (itemId) => (dispatch, getState) => {
     .then(([web3, freeSwapInstance]) => {
       web3.eth.getAccounts((error, accounts) => {
         console.log('itemId', itemId);
-        freeSwapInstance.disableSwapItem(itemId, {from: accounts[0], gas: 440000})
+        console.log('accounts', accounts);
+        freeSwapInstance.disableItem(itemId, {from: accounts[0], gas: 440000})
         .then((result) => {
           dispatch(disableItemSuccess(result));
           dispatch(getTotalNumberOfItems());
@@ -169,6 +173,35 @@ export const disableItem = (itemId) => (dispatch, getState) => {
         .catch(e => {
           console.log('e', e);
           dispatch(disableItemFailure(e));
+        })
+      })
+    });
+}
+
+export const requestItemSuccess = error => ({
+  type: REQUEST_ONE_ITEM_SUCCESS,
+  payload: error
+});
+
+export const requestItemFailure = error => ({
+  type: REQUEST_ONE_ITEM_FAILURE,
+  payload: error
+});
+
+export const requestItem = (itemId) => (dispatch, getState) => {
+  dispatch({
+    type: REQUEST_ONE_ITEM_REQUEST
+  })
+  getWeb3
+    .then(([web3, freeSwapInstance]) => {
+      web3.eth.getAccounts((error, accounts) => {
+        freeSwapInstance.requestItem(itemId, {from: accounts[0], gas: 440000})
+        .then((result) => {
+          dispatch(requestItemSuccess(result));
+          dispatch(getTotalNumberOfItems());
+        })
+        .catch(e => {
+          dispatch(requestItemFailure(e));
         })
       })
     });

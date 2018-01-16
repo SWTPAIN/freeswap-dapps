@@ -16,19 +16,31 @@ const stateToString = state => {
   }
 }
 
-const Item = ({classes, handleDisableButtonClick, item: {name, description, state}}) =>
+const Item = ({
+  classes,
+  handleDisableButtonClick,
+  handleRequestButtonClick,
+  item: {name, description, state}}) =>
   <div>
     <Card className={classes.card}>
       <CardContent>
-        <Typography className={classes.title}>{name}</Typography>
+        <Typography className={classes.title}>{name}({stateToString(state)})</Typography>
         <Typography className={classes.description}>{description}</Typography>
-        <Typography className={classes.description}>{stateToString(state)}</Typography>
       </CardContent>
       <CardActions>
-        <Button dense>Request Take</Button>
-        <Button
-          onClick={handleDisableButtonClick} 
-          dense>Disabled</Button>
+        {
+          (state === 0) &&
+          [
+            <Button
+              key="requestButton"
+              onClick={handleRequestButtonClick}
+              dense>Request Take</Button>,
+            <Button
+              key="disableButton"
+              onClick={handleDisableButtonClick} 
+              dense>Disabled</Button>
+          ]
+        }
       </CardActions>
     </Card>
   </div>
@@ -45,12 +57,15 @@ const itemStyles = theme => ({
   },
   description: {
     fontSize: 14,
+  },
+  status: {
+    margin: 4
   }
 });
 
 const StyledItem = withStyles(itemStyles)(Item);
 
-const ItemList = ({items, handleDisableItemButtonClick}) =>
+const ItemList = ({items, handleDisableItemButtonClick, handleRequestItemButtonClick}) =>
   <div>
     <Typography type="headline" gutterBottom>
       List of Item to be taken
@@ -60,9 +75,22 @@ const ItemList = ({items, handleDisableItemButtonClick}) =>
         <StyledItem
           key={item.id}
           item={item}
-          handleDisableButtonClick={() => handleDisableItemButtonClick(item.id)}/>
+          handleRequestButtonClick={() => handleRequestItemButtonClick(item.id)}
+          handleDisableButtonClick={() => handleDisableItemButtonClick(item.id)}
+        />
       )
     }
   </div>
+
+ItemList.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    state: PropTypes.number
+  })),
+  handleRequestItemButtonClick: PropTypes.func.isRequired,
+  handleDisableItemButtonClick: PropTypes.func.isRequired,
+}
 
 export default ItemList;

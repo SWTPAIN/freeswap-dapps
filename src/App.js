@@ -49,6 +49,7 @@ class App extends Component {
           <div>
             <ItemList
               items={items}
+              handleRequestItemButtonClick={this.props.requestItem}
               handleDisableItemButtonClick={this.props.disableItem}/>
           </div>
         </main>
@@ -87,6 +88,7 @@ const AppContainer = connect(
     createItem: ACTIONS.createItem,
     getAllItems: ACTIONS.getAllItems,
     disableItem: ACTIONS.disableItem,
+    requestItem: ACTIONS.requestItem,
   }
 )(App);
 

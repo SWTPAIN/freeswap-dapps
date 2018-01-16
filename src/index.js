@@ -8,8 +8,6 @@ import SmartContractProvider from './providers/SmartContractProvider';
 // Redux Store
 import store from './store'
 
-
-
 const initRender = ([web3, freeSwapInstance]) => {
   ReactDOM.render(
     <Provider store={store}>
@@ -27,6 +25,9 @@ const initRender = ([web3, freeSwapInstance]) => {
 const bootstrap = () => {
   web3
     .then(initRender)
+    .catch(e => {
+      console.error('error in bootstrap: ', e);
+    });
 }
 
 
