@@ -48,7 +48,8 @@ class App extends Component {
           </div>
           <div>
             <ItemList
-              items={items}/>
+              items={items}
+              handleDisableItemButtonClick={this.props.disableItem}/>
           </div>
         </main>
       </div>
@@ -60,7 +61,8 @@ App.propTypes = {
   form: PropTypes.shape({
     name: PropTypes.string,
     description: PropTypes.string,
-    getAllItems: PropTypes.func
+    getAllItems: PropTypes.func,
+    disableItem: PropTypes.func
   }),
   totalNumberOfItems: PropTypes.number,
   items: PropTypes.arrayOf(PropTypes.shape({
@@ -83,7 +85,8 @@ const AppContainer = connect(
     updateNewItemName: ACTIONS.updateNewItemName,
     updateNewItemDescription: ACTIONS.updateNewItemDescription,
     createItem: ACTIONS.createItem,
-    getAllItems: ACTIONS.getAllItems
+    getAllItems: ACTIONS.getAllItems,
+    disableItem: ACTIONS.disableItem,
   }
 )(App);
 

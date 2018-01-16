@@ -16,7 +16,7 @@ const stateToString = state => {
   }
 }
 
-const Item = ({classes, item: {name, description, state}}) =>
+const Item = ({classes, handleDisableButtonClick, item: {name, description, state}}) =>
   <div>
     <Card className={classes.card}>
       <CardContent>
@@ -26,6 +26,9 @@ const Item = ({classes, item: {name, description, state}}) =>
       </CardContent>
       <CardActions>
         <Button dense>Request Take</Button>
+        <Button
+          onClick={handleDisableButtonClick} 
+          dense>Disabled</Button>
       </CardActions>
     </Card>
   </div>
@@ -47,7 +50,7 @@ const itemStyles = theme => ({
 
 const StyledItem = withStyles(itemStyles)(Item);
 
-const ItemList = ({items}) =>
+const ItemList = ({items, handleDisableItemButtonClick}) =>
   <div>
     <Typography type="headline" gutterBottom>
       List of Item to be taken
@@ -56,7 +59,8 @@ const ItemList = ({items}) =>
       items.map(item =>
         <StyledItem
           key={item.id}
-          item={item}/>
+          item={item}
+          handleDisableButtonClick={() => handleDisableItemButtonClick(item.id)}/>
       )
     }
   </div>

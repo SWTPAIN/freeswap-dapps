@@ -13,6 +13,9 @@ export const GET_ALL_ITEMS_REQUEST = 'SWAP_ITEM/GET_ALL_ITEMS_REQUEST';
 export const GET_ONE_ITEM_REQUEST = 'SWAP_ITEM/GET_ONE_ITEM_REQUEST';
 export const GET_ONE_ITEM_SUCCESS = 'SWAP_ITEM/GET_ONE_ITEM_SUCCESS';
 export const GET_ONE_ITEM_FAILURE = 'SWAP_ITEM/GET_ONE_ITEM_FAILURE';
+export const DISABLE_ONE_ITEM_REQUEST = 'SWAP_ITEM/DISABLE_ONE_ITEM_REQUEST';
+export const DISABLE_ONE_ITEM_SUCCESS = 'SWAP_ITEM/DISABLE_ONE_ITEM_SUCCESS';
+export const DISABLE_ONE_ITEM_FAILURE = 'SWAP_ITEM/DISABLE_ONE_ITEM_FAILURE';
 
 export const updateNewItemName = name => ({
   type: UPDATE_NEW_ITEM_NAME,
@@ -110,6 +113,11 @@ export const getAllItems = () => (dispatch, getState) => {
     });
 };
 
+export const createItemSuccess = error => ({
+  type: CREATE_ITEM_SUCCESS,
+  payload: error
+});
+
 export const createItemFailure = error => ({
   type: CREATE_ITEM_FAILURE,
   payload: error
@@ -124,6 +132,7 @@ export const createItem = (name, description) => (dispatch, getState) => {
       web3.eth.getAccounts((error, accounts) => {
         freeSwapInstance.createSwapItem(name, description, {from: accounts[0]})
         .then((result) => {
+          dispatch(createItemSuccess(result));
           dispatch(getTotalNumberOfItems());
         })
         .catch(e => {
@@ -133,3 +142,35 @@ export const createItem = (name, description) => (dispatch, getState) => {
       })
     });
 }
+
+export const disableItemSuccess = error => ({
+  type: DISABLE_ONE_ITEM_SUCCESS,
+  payload: error
+});
+
+export const disableItemFailure = error => ({
+  type: DISABLE_ONE_ITEM_FAILURE,
+  payload: error
+});
+
+export const disableItem = (itemId) => (dispatch, getState) => {
+  dispatch({
+    type: DISABLE_ONE_ITEM_REQUEST
+  })
+  getWeb3
+    .then(([web3, freeSwapInstance]) => {
+      web3.eth.getAccounts((error, accounts) => {
+        console.log('itemId', itemId);
+        freeSwapInstance.disableSwapItem(itemId, {from: accounts[0], gas: 440000})
+        .then((result) => {
+          dispatch(disableItemSuccess(result));
+          dispatch(getTotalNumberOfItems());
+        })
+        .catch(e => {
+          console.log('e', e);
+          dispatch(disableItemFailure(e));
+        })
+      })
+    });
+}
+
